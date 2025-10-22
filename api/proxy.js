@@ -1,7 +1,5 @@
 // Proxy gratuito da OpenAI para Google Apps Script
-// Roda na Vercel sem precisar de cartão
-import fetch from "node-fetch";
-
+// Versão nativa (sem node-fetch) — compatível com Vercel 2025
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -12,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const openaiRes = await fetch("https://api.openai.com/v1/responses", {
+    const openaiResponse = await fetch("https://api.openai.com/v1/responses", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
@@ -21,8 +19,8 @@ export default async function handler(req, res) {
       body: JSON.stringify(req.body)
     });
 
-    const data = await openaiRes.text();
-    res.status(openaiRes.status).send(data);
+    const text = await openaiResponse.text();
+    res.status(openaiResponse.status).send(text);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
